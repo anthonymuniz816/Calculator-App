@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator</title>
+  <!-- Link to the external CSS file -->
+  <link rel="stylesheet" href="cstyles.css">
+</head>
+<body>
+  <h1 id="heading">Welcome to my Calculator! </h1>
+
+  <div id="calculator">
+    <div id="display">0</div>
+    <button>7</button>
+    <button>8</button>
+    <button>9</button>
+    <button>4</button>
+    <button>5</button>
+    <button>6</button>
+    <button>1</button>
+    <button>2</button>
+    <button>3</button>
+    <button>0</button>
+    <button>+</button>
+    <button>-</button>
+    <button>*</button>
+    <button>/</button>
+    <button>.</button>
+    <button>=</button>
+    
+    <button>Clear</button>
+  </div>
+  <script>
+    // JavaScript Code
+    const display = document.getElementById("display");
+    const buttons = document.querySelectorAll("button");
+
+    let firstNumber = null;
+    let operation = null;
+    let waitingForSecondNumber = false;
+
+    buttons.forEach(button => {
+      button.addEventListener("click", () => {
+        const buttonText = button.textContent;
+
+        if (buttonText >= "0" && buttonText <= "9") {
+          handleDigit(buttonText);
+        } else if (buttonText === ".") {
+          handleDecimal();
+        } else if (buttonText === "Clear") {
+          handleClear();
+        } else if (buttonText === "=") {
+          handleEquals();
+        } else {
+          handleOperation(buttonText);
+        }
+      });
+    });
+
+    function handleDigit(digit) {
+      if (waitingForSecondNumber) {
+        display.textContent = digit;
+        waitingForSecondNumber = false;
+      } else {
+        display.textContent = display.textContent === "0" ? digit : display.textContent + digit;
+      }
+    }
+
+    function handleDecimal() {
+      if (!display.textContent.includes(".")) {
+        display.textContent += ".";
+      }
+    }
+
+    function handleClear() {
+      display.textContent = "0";
+      firstNumber = null;
+      operation = null;
+      waitingForSecondNumber = false;
+    }
+
+    function handleOperation(op) {
+      if (firstNumber === null) {
+        firstNumber = parseFloat(display.textContent);
+      } else if (!waitingForSecondNumber) {
+        handleEquals();
+        firstNumber = parseFloat(display.textContent);
+      }
+      operation = op;
+      waitingForSecondNumber = true;
+    }
+
+    function handleEquals() {
+      if (operation === null || waitingForSecondNumber) return;
+
+      const secondNumber = parseFloat(display.textContent);
+      let result = 0;
+
+      switch (operation) {
+        case "+":
+          result = firstNumber + secondNumber;
+          break;
+        case "-":
+          result = firstNumber - secondNumber;
+          break;
+        case "*":
+          result = firstNumber * secondNumber;
+          break;
+        case "/":
+          result = firstNumber / secondNumber;
+          break;
+        default:
+          return;
+      }
+
+      display.textContent = result;
+      firstNumber = result;
+      waitingForSecondNumber = true;
+    }
+  </script>
+
+  
+</body>
+</html>
